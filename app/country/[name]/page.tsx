@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Country } from "@/app/page";
+import CountryCard from "@/app/components/country-card/CountryCard";
 
 async function getCountryByName(name: string): Promise<Country> {
   const response = await fetch(
@@ -18,6 +19,7 @@ async function getCountryBordersByName(name: string) {
   const country = countries.find(
     (country: Country) => country.name.common === name
   )!;
+
   return country.borders?.map((border) => {
     const borderCountry = countries.find((country) => country.cca3 === border)!;
     return {
@@ -81,6 +83,21 @@ export default async function CountryDetail({
           <Image src={country.flags.svg} alt={country.flags.alt} fill />
         </div>
       </article>
+
+      <section>
+        <h3 className="mt-12 text-2xl font-semibold text-gray-800">
+          Соседние страны
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 w-full container gap-2">
+          {borderCountries ? (
+            borderCountries?.map((border) => (
+              <CountryCard key={border.name} {...border} />
+            ))
+          ) : (
+            <p>Нет соседей</p>
+          )}
+        </div>
+      </section>
     </section>
   );
 }
